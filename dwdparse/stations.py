@@ -16,7 +16,11 @@ class StationIDConverter:
 
     def __init__(self):
         self.dwd_to_wmo = {}
+        self.dwd_to_wmo_date = {}
         self.wmo_to_dwd = {}
+        self.wmo_to_dwd_date = {}
+        self.dwd_to_coords = {}
+        self.wmo_to_coords = {}
 
     def load(self, path=None):
         logger.info("Updating station ID mappings")
@@ -30,6 +34,10 @@ class StationIDConverter:
     def parse_station_list(self, html):
         dwd_to_wmo = {}
         wmo_to_dwd = {}
+        dwd_to_wmo_date = {}
+        wmo_to_dwd_date = {}
+        dwd_to_coords = {}
+
         for line in html.splitlines():
             if not line.startswith('<tr>') or not line.count('<td') == 11:
                 continue
@@ -38,11 +46,26 @@ class StationIDConverter:
                 continue
             dwd_id = values[1].zfill(5)
             wmo_id = values[3]
-            dwd_to_wmo[dwd_id] = wmo_id
-            wmo_to_dwd[wmo_id] = dwd_id
+            end_date = values[10]
+            if not (dwd_id in dwd_to_wmo_date) or \
+                (end_date[-4:] > dwd_to_wmo_date[dwd_id][-4:]): # use most current station based on year
+                dwd_to_wmo[dwd_id] = wmo_id
+                dwd_to_wmo_date[dwd_id] = end_date
+                dwd_to_coords[dwd_id] = [values[4],values[5]]
+
+            if not (wmo_id in wmo_to_dwd_date) or \
+                (end_date[-4:] > wmo_to_dwd_date[wmo_id][-4:]): # use most current station based on year
+                wmo_to_dwd[wmo_id] = dwd_id
+                wmo_to_dwd_date[wmo_id] = end_date
+                wmo_to_coords[wmo_id] = [values[4],values[5]]
+
         assert dwd_to_wmo, "Found no stations in station list"
         self.dwd_to_wmo = dwd_to_wmo
+        self.dwd_to_wmo_date = dwd_to_wmo_date
         self.wmo_to_dwd = wmo_to_dwd
+        self.wmo_to_dwd_date = wmo_to_dwd_date
+        self.dwd_to_coords = dwd_to_coords
+        self.wmo_to_coords = wmo_to_coords
         logger.info("Parsed %d station ID mappings", len(dwd_to_wmo))
 
     def convert_to_wmo(self, dwd_id):
