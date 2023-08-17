@@ -510,3 +510,48 @@ def test_get_parser():
     }
     for filename, expected_parser in expected.items():
         assert get_parser(filename) is expected_parser
+
+# import logging
+# logger = logging.getLogger(__name__)
+
+
+# def test_mosmix_parser_equals_stations(data_dir):
+#     from dwdparse.stations import load_stations
+
+#     load_stations()
+
+#     import dwdparse.api
+#     records = list(dwdparse.api.parse_url(
+#             'https://opendata.dwd.de/weather/local_forecasts/mos/MOSMIX_S/all_stations/kml/MOSMIX_S_LATEST_240.kmz'
+#     ))
+
+#     assert len(records) > 247
+
+
+#     # import pdb
+#     # pdb.set_trace()
+
+#     mismatches = []
+
+#     c = dwdparse.stations._converter
+#     for r in records:
+#         if not r['dwd_station_id']:
+#             continue
+#         if  not abs(float(dwdparse.stations._converter.wmo_to_coords.get(r['wmo_station_id'])[0]) - r['lat'])<0.2 or \
+#             not abs(float(dwdparse.stations._converter.wmo_to_coords.get(r['wmo_station_id'])[1]) - r['lon'])<0.2 or \
+#             not abs(float(dwdparse.stations._converter.dwd_to_coords.get(r['dwd_station_id'])[0]) - r['lat'])<0.2 or \
+#             not abs(float(dwdparse.stations._converter.dwd_to_coords.get(r['dwd_station_id'])[1]) - r['lon'])<0.2:
+#             mismatches.append({
+#                 'wmo': r['wmo_station_id'],
+#                 'dwd': r['dwd_station_id'],
+#                 'coord': [r['lat'], r['lon']],
+#                 'wmo coord': dwdparse.stations._converter.wmo_to_coords.get(r['wmo_station_id']),
+#                 'dwd coord': dwdparse.stations._converter.dwd_to_coords.get(r['dwd_station_id'])
+#             })
+
+#     if mismatches:
+#         logger.info(mismatches)
+#     with open('debug.json', 'w') as f:
+#         import json
+#         json.dump(mismatches, f)
+#     assert(len(mismatches) == 0)

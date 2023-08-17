@@ -37,6 +37,7 @@ class StationIDConverter:
         dwd_to_wmo_date = {}
         wmo_to_dwd_date = {}
         dwd_to_coords = {}
+        wmo_to_coords = {}
 
         for line in html.splitlines():
             if not line.startswith('<tr>') or not line.count('<td') == 11:
