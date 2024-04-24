@@ -39,6 +39,9 @@ class StationIDConverter:
         dwd_to_coords = {}
         wmo_to_coords = {}
 
+        # new dwd station list has a newline
+        html = html.replace('\n', '').replace('<tr>','\n<tr>')
+
         for line in html.splitlines():
             if not line.startswith('<tr>') or not line.count('<td') == 11:
                 continue
